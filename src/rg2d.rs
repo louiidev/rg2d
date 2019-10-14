@@ -1,12 +1,7 @@
-use sdl2::event::Event;
+
 use sdl2::EventPump;
-use sdl2::image::{self, InitFlag, LoadTexture};
-use sdl2::keyboard::Keycode;
-use sdl2::pixels::Color;
-use sdl2::rect::{Point, Rect};
-use sdl2::render::{Canvas, Texture, WindowCanvas};
-use std::path::Path;
-use std::time::Duration;
+use sdl2::image::{self, InitFlag};
+use sdl2::render::{WindowCanvas};
 
 
 pub struct Rg2d {}
