@@ -1,50 +1,46 @@
 
-use sdl2::EventPump;
-use sdl2::image::{self, InitFlag};
-use sdl2::render::{WindowCanvas};
-use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
+use sdl2::event::Event;
 use std::time::Duration;
-
+use sdl2::pixels::Color;
 mod context;
+mod game_loop;
 
-pub struct Rg2d {}
 
-impl Rg2d {
+fn main() {
+   let (mut ctx, mut event_pump) = context::Context::new();
+    ctx.canvas.set_draw_color(Color::RGB(130, 130, 255));
+    ctx.canvas.clear();
+    ctx.canvas.present();
+    
 
-  pub fn new() -> (WindowCanvas, EventPump) {
-      let sdl_context = sdl2::init().unwrap();
-      let video_subsystem = sdl_context.video().unwrap();
-      let even_pump = sdl_context.event_pump().unwrap();
-      let _image_context = image::init(InitFlag::PNG | InitFlag::JPG);
-      let window = video_subsystem
-      .window("rg2d", 800, 600)
-      .build()
-      .expect("could not initialize video subsystem");
-      let canvas = window
-        .into_canvas()
-        .build()
-        .expect("could not make a canvas");
-      (canvas, even_pump)
-  }
+    struct MyGame {
+    // Your state here...
+        }
 
-}
+        impl MyGame {
+            pub fn new(_ctx: &mut context::Context) -> MyGame {
+                // Load/create resources here: images, fonts, sounds, etc.
+                MyGame { }
+            }
+        }
+        impl game_loop::EventHandler for MyGame {
+            fn update(&mut self, _ctx: &mut context::Context) -> Result<(), String> {
+                // Update code here...
+                println!("updates");
+                Ok(())
+            }
 
-trait Game {
-    fn update(&self);
-    fn render(&self, ctx: &mut context::Context);
-}
+            fn render(&mut self, ctx: &mut context::Context) -> Result<(), String> {
+               Ok(())
+            }
+        }
 
-struct GameLoop {}
+        let mut my_game = MyGame::new(&mut ctx);
 
-impl GameLoop {
-  pub fn run<T>(ctx: &mut context::Context, event_pump: &mut EventPump, game: &mut dyn Game) -> Result<(), String> {
-    'main: loop {
-      game.update();
-      game.render(ctx);
-      std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
+    match game_loop::GameLoop::run(&mut ctx, &mut event_pump, &mut my_game) {
+        Ok(()) => println!("Game exited"),
+        Err(e) => println!("Error occured: {}", e)
     }
 
-    Ok(())
-  }
 }

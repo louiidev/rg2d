@@ -1,7 +1,7 @@
 extern crate gl;
 extern crate sdl2;
 
-mod main;
+mod lib;
 
 use sdl2::event::Event;
 use sdl2::image::{self, InitFlag, LoadTexture};
@@ -45,7 +45,7 @@ fn render_sprite(
 }
 
 fn main() -> Result<(), String> {
-  let (mut canvas, mut event_pump) = rg2d::Rg2d::new();
+  let (mut canvas, mut event_pump) = main::Rg2d::new();
 
   let texture_creator = canvas.texture_creator();
   let path = Path::new("assets/bardo.png");
