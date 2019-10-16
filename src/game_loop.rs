@@ -20,7 +20,7 @@ pub trait EventHandler {
 
 
 impl GameLoop {
-  pub fn run<S>(ctx: &mut Context, event_pump: &mut EventPump, state: &mut S) -> Result<(), String> where S: EventHandler {
+  pub fn run<S>(mut ctx: &mut Context, event_pump: &mut EventPump, state: &mut S) -> Result<(), String> where S: EventHandler {
     'main: loop {
         for event in event_pump.poll_iter() {
             match event {

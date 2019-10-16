@@ -10,5 +10,5 @@ edition = "2018"
 gl = "0.10.0"
 
 [dependencies.sdl2]
-version = "0.32"
+version = "0.32.2"
 features = ["image"]
