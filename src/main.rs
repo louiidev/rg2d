@@ -6,16 +6,20 @@ use sdl2::rect::{Point, Rect};
 use sdl2::render::Texture;
 use std::path::Path;
 use std::time::Duration;
+use sdl2::render::TextureCreator;
+
 mod context;
 mod game_loop;
+
 
 fn render_sprite(
   ctx: &mut context::Context,
   texture: &Texture,
   sprite: Rect,
+  pos: Point
 ) -> Result<(), String> {
   let (width, height) = ctx.canvas.output_size()?;
-  let screen_position = Point::new(width as i32 / 2, height as i32 / 2);
+  let screen_position = pos + Point::new(width as i32 / 2, height as i32 / 2);
   let screen_rect = Rect::from_center(screen_position, sprite.width(), sprite.height());
 
   ctx.canvas.copy(texture, sprite, screen_rect)?;
@@ -29,33 +33,31 @@ fn main() -> Result<(), String> {
   ctx.canvas.present();
 
   struct MyGame {
-    player_texture:Texture<ctx>
+      texture: Texture,
+      position: Point
   }
 
   impl MyGame {
-    pub fn new(ctx: &mut context::Context) -> MyGame {
-      let texture_creator = ctx.canvas.texture_creator();
-      let path = Path::new("assets/bardo.png");
-      let texture = ctx.texture_creator.load_texture(path).unwrap();
-    
-      ctx.canvas.set_draw_color(Color::RGB(130, 130, 255));
-      ctx.canvas.clear();
-
-      render_sprite(ctx, &texture, Rect::new(0, 0, 26, 36));
-      ctx.canvas.present();
+    pub fn new(mut ctx: &mut context::Context) -> MyGame {
+    let path = Path::new("assets/bardo.png");
+    let texture = ctx.texture_creator.load_texture(path).unwrap();
       MyGame {
-        player_texture: texture,
+          texture,
+          position: Point::new(0, 0)
       }
     }
   }
   impl game_loop::EventHandler for MyGame {
     fn update(&mut self, _ctx: &mut context::Context) -> Result<(), String> {
-      // Update code here...
+      self.position = self.position.offset(1, 0);
       Ok(())
     }
 
-    fn render(&mut self, ctx: &mut context::Context) -> Result<(), String> {
-      
+    fn render(&mut self, mut ctx: &mut context::Context) -> Result<(), String> {
+        ctx.canvas.set_draw_color(Color::RGB(130, 130, 255));
+        ctx.canvas.clear();
+        render_sprite(&mut ctx, &self.texture, Rect::new(0, 0, 26, 36), self.position);
+        ctx.canvas.present();
       Ok(())
     }
   }

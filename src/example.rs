@@ -1,6 +1,3 @@
-extern crate gl;
-extern crate sdl2;
-
 mod lib;
 
 use sdl2::event::Event;
