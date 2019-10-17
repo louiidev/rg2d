@@ -11,18 +11,45 @@ use sdl2::render::TextureCreator;
 mod context;
 mod game_loop;
 
+struct Sprite {
+    texture: Texture, // sprite texture
+    area: Rect // area of sprite to render 
+}
+
+impl Sprite {
+    fn new(texture: Texture, area: Rect) -> Self {
+        Sprite {
+            texture,
+            area
+        }
+    }
+}
+
+struct Entity {
+    sprite: Sprite,
+    position: Point,
+}
+
+impl Entity {
+    fn new(sprite: Sprite, position: Point) -> Self {
+        Entity {
+            sprite,
+            position
+        }
+    }
+}
+
 
 fn render_sprite(
   ctx: &mut context::Context,
-  texture: &Texture,
-  sprite: Rect,
-  pos: Point
+  entity: &Entity
 ) -> Result<(), String> {
+  let sprite = &entity.sprite;
   let (width, height) = ctx.canvas.output_size()?;
-  let screen_position = pos + Point::new(width as i32 / 2, height as i32 / 2);
-  let screen_rect = Rect::from_center(screen_position, sprite.width(), sprite.height());
+  let screen_position = entity.position + Point::new(width as i32 / 2, height as i32 / 2);
+  let screen_rect = Rect::from_center(screen_position, sprite.area.width(), sprite.area.height());
 
-  ctx.canvas.copy(texture, sprite, screen_rect)?;
+  ctx.canvas.copy(&sprite.texture, sprite.area, screen_rect)?;
   Ok(())
 }
 
@@ -33,8 +60,7 @@ fn main() -> Result<(), String> {
   ctx.canvas.present();
 
   struct MyGame {
-      texture: Texture,
-      position: Point
+      player: Entity
   }
 
   impl MyGame {
@@ -42,21 +68,20 @@ fn main() -> Result<(), String> {
     let path = Path::new("assets/bardo.png");
     let texture = ctx.texture_creator.load_texture(path).unwrap();
       MyGame {
-          texture,
-          position: Point::new(0, 0)
+          player: Entity::new(Sprite::new(texture, Rect::new(0, 0, 26, 36)), Point::new(0, 0))
       }
     }
   }
   impl game_loop::EventHandler for MyGame {
     fn update(&mut self, _ctx: &mut context::Context) -> Result<(), String> {
-      self.position = self.position.offset(1, 0);
+      self.player.position = self.player.position.offset(1, 0);
       Ok(())
     }
 
     fn render(&mut self, mut ctx: &mut context::Context) -> Result<(), String> {
         ctx.canvas.set_draw_color(Color::RGB(130, 130, 255));
         ctx.canvas.clear();
-        render_sprite(&mut ctx, &self.texture, Rect::new(0, 0, 26, 36), self.position);
+        render_sprite(&mut ctx, &self.player);
         ctx.canvas.present();
       Ok(())
     }
