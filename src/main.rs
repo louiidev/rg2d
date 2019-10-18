@@ -60,7 +60,8 @@ fn main() -> Result<(), String> {
   ctx.canvas.present();
 
   struct MyGame {
-      player: Entity
+      player: Entity,
+      movement_speed: f32,
   }
 
   impl MyGame {
@@ -68,13 +69,25 @@ fn main() -> Result<(), String> {
     let path = Path::new("assets/bardo.png");
     let texture = ctx.texture_creator.load_texture(path).unwrap();
       MyGame {
-          player: Entity::new(Sprite::new(texture, Rect::new(0, 0, 26, 36)), Point::new(0, 0))
+          player: Entity::new(Sprite::new(texture, Rect::new(0, 0, 26, 36)), Point::new(0, 0)),
+          movement_speed: 2f32
       }
     }
   }
   impl game_loop::EventHandler for MyGame {
     fn update(&mut self, _ctx: &mut context::Context) -> Result<(), String> {
-      self.player.position = self.player.position.offset(1, 0);
+      let mut x = 0;
+      let mut y = 0;
+      for key in _ctx.input.keys_current.iter() {
+        match key {
+          Keycode::A => x = -1,
+          Keycode::D => x = 1,
+          Keycode::W => y = -1,
+          Keycode::S => y = 1,
+          _ => {}
+        }
+      }
+      self.player.position = self.player.position.offset(x * self.movement_speed, y * self.movement_speed);
       Ok(())
     }
 
