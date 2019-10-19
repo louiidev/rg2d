@@ -1,7 +1,8 @@
 use sdl2::event::Event;
 use sdl2::EventPump;
-use crate::context::Context;
 use std::time::Duration;
+use rg2d::context::Context;
+
 
 pub struct GameLoop {
 
@@ -29,7 +30,9 @@ impl GameLoop {
         }
         ctx.input.set_keys(&events);
         state.update(&mut ctx);
+        ctx.canvas.clear();
         state.render(&mut ctx);
+        ctx.canvas.present();
         std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
     }
 

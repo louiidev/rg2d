@@ -2,7 +2,7 @@ use sdl2::rect::{Point, Rect};
 use sdl2::render::Texture;
 use crate::context::Context;
 use crate::physics::Vector2;
-
+use sdl2::pixels::Color;
 
 pub struct Sprite {
     pub texture: Texture, // sprite texture
@@ -19,15 +19,26 @@ impl Sprite {
 }
 
 
-pub fn render_sprite(
-  ctx: &mut Context,
-  sprite: &Sprite,
-  position: Vector2
-) -> Result<(), String> {
-  let (width, height) = ctx.canvas.output_size()?;
-  let screen_position = position + Vector2::new(width as f32 / 2f32, height as f32 / 2f32);
-  let screen_rect = Rect::from_center(Point::new(screen_position.x as i32, screen_position.y as i32), sprite.area.width(), sprite.area.height());
+pub struct Render {
+    
+}
 
-  ctx.canvas.copy(&sprite.texture, sprite.area, screen_rect)?;
-  Ok(())
+impl Render {
+    pub fn sprite(ctx: &mut Context, sprite: &Sprite, position: Vector2) {
+        let (width, height) = ctx.canvas.output_size().unwrap();
+        let screen_position = position + Vector2::new(width as f32 / 2f32, height as f32 / 2f32);
+        let screen_rect = Rect::from_center(Point::new(screen_position.x as i32, screen_position.y as i32), sprite.area.width(), sprite.area.height());
+
+        ctx.canvas.copy(&sprite.texture, sprite.area, screen_rect);
+    }
+    pub fn clear(ctx: &mut Context, color: Color) {
+        ctx.canvas.set_draw_color(color);
+        ctx.canvas.clear();
+    }
+
+    pub fn rect(ctx: &mut Context, size: Rect, color: Color) {
+        ctx.canvas.set_draw_color(color);
+        ctx.canvas.draw_rect(size);
+        ctx.canvas.fill_rect(size);
+    }
 }
