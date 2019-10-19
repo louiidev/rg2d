@@ -1,20 +1,9 @@
-use sdl2::image::{self, InitFlag, LoadTexture};
+use sdl2::image::{self, InitFlag};
 use sdl2::render::Canvas;
 use sdl2::EventPump;
-use sdl2::render::{TextureCreator, Texture};
-use sdl2::video::WindowContext;
-use std::collections::HashMap;
-use std::hash::Hash;
-use std::rc::Rc;
+use sdl2::render::{TextureCreator};
 use std::collections::HashSet;
-use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use sdl2::pixels::Color;
-
-
-use std::env;
-use std::borrow::Borrow;
-
 
 pub struct Context {
     pub canvas: Canvas<sdl2::video::Window>,

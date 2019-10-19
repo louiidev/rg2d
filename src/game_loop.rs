@@ -1,8 +1,4 @@
-use sdl2::image::{self, InitFlag};
-use sdl2::render::WindowCanvas;
-use std::collections::HashSet;
 use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
 use sdl2::EventPump;
 use crate::context::Context;
 use std::time::Duration;
