@@ -4,12 +4,18 @@ use sdl2::EventPump;
 use sdl2::render::{TextureCreator};
 use std::collections::HashSet;
 use sdl2::keyboard::Keycode;
+use sdl2::ttf::Sdl2TtfContext;
+use std::path::Path;
+use sdl2::ttf::Font;
 
-pub struct Context {
-    pub canvas: Canvas<sdl2::video::Window>,
-    pub texture_creator: TextureCreator<sdl2::video::WindowContext>,
-    pub input: Input
-}
+use rusttype::{point, FontCollection, PositionedGlyph, Scale};
+use std::io::Write;
+
+use std::io;
+use std::io::prelude::*;
+use std::fs::File;
+use ttf_parser;
+
 
 pub struct Input {
     pub keys_current: HashSet<Keycode>,
@@ -50,11 +56,18 @@ impl Input {
     }
 }
 
+pub struct Context {
+    pub canvas: Canvas<sdl2::video::Window>,
+    pub texture_creator: TextureCreator<sdl2::video::WindowContext>,
+    pub input: Input,
+    pub tff: Sdl2TtfContext
+}
 
 impl Context {
     pub fn new() -> (Context, EventPump) {
         let sdl_context = sdl2::init().unwrap();
         let video_subsystem = sdl_context.video().unwrap();
+        let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string()).unwrap();
         let _image_context = image::init(InitFlag::PNG | InitFlag::JPG);
         let window = video_subsystem
             .window("rg2d", 800, 600)
@@ -67,5 +80,6 @@ impl Context {
             .expect("could not make a canvas");
         let texture_creator = canvas.texture_creator();
         let input = Input::new();
-        (Context { canvas, texture_creator, input }, sdl_context.event_pump().unwrap())
+        
+        (Context { canvas, texture_creator, input, tff: ttf_context }, sdl_context.event_pump().unwrap())
     }}

@@ -41,4 +41,5 @@ impl Render {
         ctx.canvas.draw_rect(size);
         ctx.canvas.fill_rect(size);
     }
+
 }
