@@ -27,7 +27,6 @@ fn main() -> Result<(), String> {
   struct MyGame {
       player: Entity,
       movement_speed: f32,
-      font: Texture,
   }
 
   impl MyGame {
@@ -35,18 +34,9 @@ fn main() -> Result<(), String> {
     let sprite_path = Path::new("assets/bardo.png");
     let font_path = Path::new("fonts/small_pixel.ttf");
     let texture = _ctx.texture_creator.load_texture(sprite_path).unwrap();
-    let mut font = _ctx.tff.load_font(font_path, 128).unwrap();
-    font.set_style(sdl2::ttf::FontStyle::BOLD);
-  
-    let surface = font.render("Hello Rust!")
-        .blended(Color::RGBA(0, 0, 0, 0)).map_err(|e| e.to_string()).unwrap();
-    
-    let fTexture = _ctx.texture_creator.create_texture_from_surface(&surface)
-        .map_err(|e| e.to_string()).unwrap();
       MyGame {
           player: Entity::new(Sprite::new(texture, Rect::new(0, 0, 26, 36)), Transform::default()),
           movement_speed: 2f32,
-          font: fTexture,
       }
     }
   }
@@ -70,7 +60,7 @@ fn main() -> Result<(), String> {
     fn render(&mut self, mut _ctx: &mut Context) -> Result<(), String> {
         Render::clear(_ctx, Color::RGB(130, 130, 255));
         Render::sprite(_ctx, &self.player.sprite, self.player.transform.position);
-        _ctx.canvas.copy(&self.font, None, Rect::new(20, 20, 250, 30))?;
+        Render::text(_ctx, &"Testing".to_string(), Vector2::new(40.0, 40.0), Color::RGB(0,0,0));
         Ok(())
     }
   }

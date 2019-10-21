@@ -18,6 +18,13 @@ impl Sprite {
     }
 }
 
+fn render_texture(ctx: &mut Context, texture: &Texture, size: Rect, position: Vector2) {
+    let (width, height) = ctx.canvas.output_size().unwrap();
+    let screen_position = position + Vector2::new(width as f32 / 2f32, height as f32 / 2f32);
+    let screen_rect = Rect::from_center(Point::new(screen_position.x as i32, screen_position.y as i32), size.width(), size.height());
+    ctx.canvas.copy(&texture, size, screen_rect);
+}
+
 
 pub struct Render {
     
@@ -25,11 +32,7 @@ pub struct Render {
 
 impl Render {
     pub fn sprite(ctx: &mut Context, sprite: &Sprite, position: Vector2) {
-        let (width, height) = ctx.canvas.output_size().unwrap();
-        let screen_position = position + Vector2::new(width as f32 / 2f32, height as f32 / 2f32);
-        let screen_rect = Rect::from_center(Point::new(screen_position.x as i32, screen_position.y as i32), sprite.area.width(), sprite.area.height());
-
-        ctx.canvas.copy(&sprite.texture, sprite.area, screen_rect);
+        render_texture(ctx, &sprite.texture, sprite.area, position);
     }
     pub fn clear(ctx: &mut Context, color: Color) {
         ctx.canvas.set_draw_color(color);
@@ -40,6 +43,19 @@ impl Render {
         ctx.canvas.set_draw_color(color);
         ctx.canvas.draw_rect(size);
         ctx.canvas.fill_rect(size);
+    }
+
+    pub fn texture(ctx: &mut Context, texture: &Texture, size: Rect, position: Vector2) {
+        render_texture(ctx, &texture, size, position);
+    }
+
+    pub fn text(ctx: &mut Context, text: &str, position: Vector2, color: Color) {
+        let surface = ctx.font.render(&text)
+        .blended(color).map_err(|e| e.to_string()).unwrap();
+    
+        let fTexture = ctx.texture_creator.create_texture_from_surface(&surface)
+            .map_err(|e| e.to_string()).unwrap();
+        render_texture(ctx, &fTexture, Rect::new(20, 20, 250, 30), position);
     }
 
 }
