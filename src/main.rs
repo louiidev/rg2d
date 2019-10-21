@@ -35,7 +35,7 @@ fn main() -> Result<(), String> {
     let texture = _ctx.texture_creator.load_texture(sprite_path).unwrap();
       MyGame {
           player: Entity::new(Sprite::new(texture, Rect::new(0, 0, 26, 36)), Transform::default()),
-          movement_speed: 2f32,
+          movement_speed: 1.85,
       }
     }
   }
@@ -59,7 +59,7 @@ fn main() -> Result<(), String> {
     fn render(&mut self, mut _ctx: &mut Context) -> Result<(), String> {
         Render::clear(_ctx, Color::RGB(130, 130, 255));
         Render::sprite(_ctx, &self.player.sprite, self.player.transform.position);
-        Render::text(_ctx, &"Testing".to_string(), Vector2::new(40.0, 40.0), Color::RGB(0,0,0));
+        Render::text(_ctx, &"Testing".to_string(), Vector2::new(0.0, 0.0), Color::RGB(0,0,0), 30);
         Ok(())
     }
   }

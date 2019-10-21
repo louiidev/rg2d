@@ -3,6 +3,8 @@ use sdl2::render::Texture;
 use crate::context::Context;
 use crate::physics::Vector2;
 use sdl2::pixels::Color;
+use sdl2::render::TextureQuery;
+
 
 pub struct Sprite {
     pub texture: Texture, // sprite texture
@@ -24,7 +26,6 @@ fn render_texture(ctx: &mut Context, texture: &Texture, size: Rect, position: Ve
     let screen_rect = Rect::from_center(Point::new(screen_position.x as i32, screen_position.y as i32), size.width(), size.height());
     ctx.canvas.copy(&texture, size, screen_rect);
 }
-
 
 pub struct Render {
     
@@ -49,13 +50,16 @@ impl Render {
         render_texture(ctx, &texture, size, position);
     }
 
-    pub fn text(ctx: &mut Context, text: &str, position: Vector2, color: Color) {
+    pub fn text(ctx: &mut Context, text: &str, position: Vector2, color: Color, size: u32) {
         let surface = ctx.font.render(&text)
         .blended(color).map_err(|e| e.to_string()).unwrap();
     
-        let fTexture = ctx.texture_creator.create_texture_from_surface(&surface)
+        let texture = ctx.texture_creator.create_texture_from_surface(&surface)
             .map_err(|e| e.to_string()).unwrap();
-        render_texture(ctx, &fTexture, Rect::new(20, 20, 250, 30), position);
+            let TextureQuery { width, height, .. } = texture.query();
+            let padding = 64;
+            let target = Rect::new(position.x as i32, position.y as i32, width / 100 * size, height / 100 * size);
+        ctx.canvas.copy(&texture, None, Some(target));
     }
 
 }
