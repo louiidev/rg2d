@@ -1,16 +1,11 @@
 use sdl2::event::Event;
 use sdl2::EventPump;
 use std::time::Duration;
-use rg2d::context::Context;
+use crate::context::Context;
 
 
 pub struct GameLoop {
 
-}
-
-trait Game {
-    fn update(&self, ctx: &mut Context);
-    fn render(&self, ctx: &mut Context);
 }
 
 pub trait EventHandler {

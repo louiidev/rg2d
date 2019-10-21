@@ -4,6 +4,7 @@ use crate::context::Context;
 use crate::physics::Vector2;
 use sdl2::pixels::Color;
 use sdl2::render::TextureQuery;
+use sdl2::ttf::Font;
 
 
 pub struct Sprite {
@@ -22,7 +23,7 @@ impl Sprite {
 
 fn render_texture(ctx: &mut Context, texture: &Texture, size: Rect, position: Vector2) {
     let (width, height) = ctx.canvas.output_size().unwrap();
-    let screen_position = position + Vector2::new(width as f32 / 2f32, height as f32 / 2f32);
+    let screen_position = position + Vector2::new(width as i32 / 2, height as i32 / 2);
     let screen_rect = Rect::from_center(Point::new(screen_position.x as i32, screen_position.y as i32), size.width(), size.height());
     ctx.canvas.copy(&texture, size, screen_rect);
 }
@@ -42,6 +43,9 @@ impl Render {
 
     pub fn rect(ctx: &mut Context, size: Rect, color: Color) {
         ctx.canvas.set_draw_color(color);
+        let (width, height) = ctx.canvas.output_size().unwrap();
+        let screen_position = Vector2::new(size.x, size.y) + Vector2::new(width as i32 / 2, height as i32 / 2);
+        let screen_rect = Rect::from_center(Point::new(screen_position.x as i32, screen_position.y as i32), size.width(), size.height());
         ctx.canvas.draw_rect(size);
         ctx.canvas.fill_rect(size);
     }
@@ -50,8 +54,8 @@ impl Render {
         render_texture(ctx, &texture, size, position);
     }
 
-    pub fn text(ctx: &mut Context, text: &str, position: Vector2, color: Color, size: u32) {
-        let surface = ctx.font.render(&text)
+    pub fn text(ctx: &mut Context, font: Font, text: &str, position: Vector2, color: Color, size: u32) {
+        let surface = font.render(&text)
         .blended(color).map_err(|e| e.to_string()).unwrap();
     
         let texture = ctx.texture_creator.create_texture_from_surface(&surface)

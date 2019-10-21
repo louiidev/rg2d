@@ -9,6 +9,7 @@ use rg2d::components::{ Entity, Transform };
 use rg2d::physics::Vector2;
 use rg2d::graphics::{ Render, Sprite };
 use rg2d::context::Context;
+use rg2d::game_loop::{GameLoop, EventHandler};
 
 mod graphics;
 mod physics;
@@ -39,7 +40,7 @@ fn main() -> Result<(), String> {
       }
     }
   }
-  impl game_loop::EventHandler for MyGame {
+  impl EventHandler for MyGame {
     fn update(&mut self, _ctx: &mut Context) -> Result<(), String> {
       let mut x = 0f32;
       let mut y = 0f32;
@@ -59,14 +60,14 @@ fn main() -> Result<(), String> {
     fn render(&mut self, mut _ctx: &mut Context) -> Result<(), String> {
         Render::clear(_ctx, Color::RGB(130, 130, 255));
         Render::sprite(_ctx, &self.player.sprite, self.player.transform.position);
-        Render::text(_ctx, &"Testing".to_string(), Vector2::new(0.0, 0.0), Color::RGB(0,0,0), 30);
+        // Render::text(_ctx, &"Testing".to_string(), Vector2::new(0.0, 0.0), Color::RGB(0,0,0), 30);
         Ok(())
     }
   }
 
   let mut my_game = MyGame::new(&mut ctx);
 
-  match game_loop::GameLoop::run(&mut ctx, &mut event_pump, &mut my_game) {
+  match GameLoop::run(&mut ctx, &mut event_pump, &mut my_game) {
     Ok(()) => println!("Game exited"),
     Err(e) => println!("Error occured: {}", e),
   }

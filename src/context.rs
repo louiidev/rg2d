@@ -52,8 +52,7 @@ pub struct Context {
     pub canvas: Canvas<sdl2::video::Window>,
     pub texture_creator: TextureCreator<sdl2::video::WindowContext>,
     pub input: Input,
-    pub tff: Sdl2TtfContext,
-    pub font: Font<'static, 'static>,
+    pub tff: Sdl2TtfContext
 }
 
 impl Context {
@@ -76,10 +75,11 @@ impl Context {
 
         let font = unsafe {
             // TODO: this is dumb and I'm bad for doing it but its a placeholder until I work out a better solution
-            std::mem::transmute(ttf_context.load_font(Path::new("fonts/small_pixel.ttf"), 128).unwrap())
+            println!("fires");
+            // std::mem::transmute(ttf_context.load_font(Path::new("fonts/small_pixel.ttf"), 128).unwrap())
         };
 
 
         
-        (Context { canvas, texture_creator, input, tff: ttf_context, font }, sdl_context.event_pump().unwrap())
+        (Context { canvas, texture_creator, input, tff: ttf_context }, sdl_context.event_pump().unwrap())
     }}

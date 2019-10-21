@@ -3,19 +3,19 @@ use std::ops::Sub;
 
 #[derive(Copy, Clone)]
 pub struct Vector2 {
-    pub x: f32,
-    pub y: f32
+    pub x: i32,
+    pub y: i32
 }
 
 impl Vector2 {
     pub fn default() -> Self {
         Vector2 {
-            x: 0f32,
-            y: 0f32
+            x: 0,
+            y: 0
         }
     }
 
-    pub fn new(x: f32, y: f32) -> Self {
+    pub fn new(x: i32, y: i32) -> Self {
         Vector2 {
             x,
             y
