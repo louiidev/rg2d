@@ -8,14 +8,6 @@ use sdl2::ttf::Sdl2TtfContext;
 use std::path::Path;
 use sdl2::ttf::Font;
 
-use rusttype::{point, FontCollection, PositionedGlyph, Scale};
-use std::io::Write;
-
-use std::io;
-use std::io::prelude::*;
-use std::fs::File;
-use ttf_parser;
-
 
 pub struct Input {
     pub keys_current: HashSet<Keycode>,

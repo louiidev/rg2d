@@ -6,11 +6,6 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dependencies]
-gl = "0.10.0"
-rusttype = "0.8.1"
-ttf-parser = "0.3.0"
-
 [dependencies.sdl2]
 version = "0.32.2"
 features = ["image", "unsafe_textures", "ttf"]

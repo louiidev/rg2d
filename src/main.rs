@@ -3,7 +3,6 @@ use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::render::Texture;
-use sdl2::ttf::Font;
 use std::path::Path;
 
 use rg2d::components::{ Entity, Transform };
