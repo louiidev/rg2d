@@ -26,7 +26,7 @@ fn main() -> Result<(), String> {
 
   struct MyGame {
       player: Entity,
-      movement_speed: f32,
+      movement_speed: i32,
   }
 
   impl MyGame {
@@ -36,20 +36,20 @@ fn main() -> Result<(), String> {
     let texture = _ctx.texture_creator.load_texture(sprite_path).unwrap();
       MyGame {
           player: Entity::new(Sprite::new(texture, Rect::new(0, 0, 26, 36)), Transform::default()),
-          movement_speed: 1.85,
+          movement_speed: 2,
       }
     }
   }
   impl EventHandler for MyGame {
     fn update(&mut self, _ctx: &mut Context) -> Result<(), String> {
-      let mut x = 0f32;
-      let mut y = 0f32;
+      let mut x = 0;
+      let mut y = 0;
       for key in _ctx.input.keys_current.iter() {
         match key {
-          Keycode::A | Keycode::Left => x = -1f32,
-          Keycode::D | Keycode::Right => x = 1f32,
-          Keycode::W | Keycode::Up => y = -1f32,
-          Keycode::S | Keycode::Down => y = 1f32,
+          Keycode::A | Keycode::Left => x = -1,
+          Keycode::D | Keycode::Right => x = 1,
+          Keycode::W | Keycode::Up => y = -1,
+          Keycode::S | Keycode::Down => y = 1,
           _ => {}
         }
       }
