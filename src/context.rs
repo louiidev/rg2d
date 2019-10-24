@@ -5,8 +5,20 @@ use sdl2::render::{TextureCreator};
 use std::collections::HashSet;
 use sdl2::keyboard::Keycode;
 use sdl2::ttf::Sdl2TtfContext;
-use std::path::Path;
-use sdl2::ttf::Font;
+use crate::physics::Vector2;
+
+
+pub struct Camera {
+    pub position: Vector2
+}
+
+impl Camera {
+    pub fn new() -> Self {
+        Camera {
+            position: Vector2::default()
+        }
+    }
+}
 
 
 pub struct Input {
@@ -52,7 +64,8 @@ pub struct Context {
     pub canvas: Canvas<sdl2::video::Window>,
     pub texture_creator: TextureCreator<sdl2::video::WindowContext>,
     pub input: Input,
-    pub tff: Sdl2TtfContext
+    pub tff: Sdl2TtfContext,
+    pub camera: Camera
 }
 
 impl Context {
@@ -72,14 +85,6 @@ impl Context {
             .expect("could not make a canvas");
         let texture_creator = canvas.texture_creator();
         let input = Input::new();
-
-        let font = unsafe {
-            // TODO: this is dumb and I'm bad for doing it but its a placeholder until I work out a better solution
-            println!("fires");
-            // std::mem::transmute(ttf_context.load_font(Path::new("fonts/small_pixel.ttf"), 128).unwrap())
-        };
-
-
-        
-        (Context { canvas, texture_creator, input, tff: ttf_context }, sdl_context.event_pump().unwrap())
+        let camera = Camera::new();
+        (Context { canvas, texture_creator, input, tff: ttf_context, camera }, sdl_context.event_pump().unwrap())
     }}

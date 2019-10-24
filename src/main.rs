@@ -54,13 +54,14 @@ fn main() -> Result<(), String> {
         }
       }
       self.player.transform.position = self.player.transform.position + Vector2::new(x * self.movement_speed, y * self.movement_speed);
+      _ctx.camera.position+= Vector2::right();
       Ok(())
     }
 
     fn render(&mut self, mut _ctx: &mut Context) -> Result<(), String> {
         Render::clear(_ctx, Color::RGB(130, 130, 255));
         Render::sprite(_ctx, &self.player.sprite, self.player.transform.position);
-        // Render::text(_ctx, &"Testing".to_string(), Vector2::new(0.0, 0.0), Color::RGB(0,0,0), 30);
+        Render::rect(_ctx, Rect::new(0, 0, 50, 50), Color::RGB(0, 0, 255));
         Ok(())
     }
   }

@@ -21,9 +21,13 @@ impl Sprite {
     }
 }
 
-fn render_texture(ctx: &mut Context, texture: &Texture, size: Rect, position: Vector2) {
+fn get_position_center_to_screen(ctx: &mut Context, position: Vector2) -> Vector2 {
     let (width, height) = ctx.canvas.output_size().unwrap();
-    let screen_position = position + Vector2::new(width as i32 / 2, height as i32 / 2);
+    position + Vector2::new(width as i32 / 2, height as i32 / 2) - ctx.camera.position
+}
+
+fn render_texture(ctx: &mut Context, texture: &Texture, size: Rect, position: Vector2) {
+    let screen_position = get_position_center_to_screen(ctx, position);
     let screen_rect = Rect::from_center(Point::new(screen_position.x as i32, screen_position.y as i32), size.width(), size.height());
     ctx.canvas.copy(&texture, size, screen_rect);
 }
@@ -43,11 +47,10 @@ impl Render {
 
     pub fn rect(ctx: &mut Context, size: Rect, color: Color) {
         ctx.canvas.set_draw_color(color);
-        let (width, height) = ctx.canvas.output_size().unwrap();
-        let screen_position = Vector2::new(size.x, size.y) + Vector2::new(width as i32 / 2, height as i32 / 2);
-        let screen_rect = Rect::from_center(Point::new(screen_position.x as i32, screen_position.y as i32), size.width(), size.height());
-        ctx.canvas.draw_rect(size);
-        ctx.canvas.fill_rect(size);
+        let screen_position = get_position_center_to_screen(ctx, Vector2::new(size.x, size.y));
+        let screen_rect = Rect::new(screen_position.x, screen_position.y, size.width(), size.height());
+        ctx.canvas.draw_rect(screen_rect);
+        ctx.canvas.fill_rect(screen_rect);
     }
 
     pub fn texture(ctx: &mut Context, texture: &Texture, size: Rect, position: Vector2) {
