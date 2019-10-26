@@ -3,16 +3,12 @@ use sdl2::EventPump;
 use std::time::Duration;
 use crate::context::Context;
 
-
-pub struct GameLoop {
-
-}
+pub struct GameLoop {}
 
 pub trait EventHandler {
-    fn update(&mut self, _ctx: &mut Context) -> Result<(), String>;
-    fn render(&mut self, _ctx: &mut Context) -> Result<(), String>;
+    fn update(&mut self, _ctx: &mut Context);
+    fn render(&mut self, _ctx: &mut Context);
 }
-
 
 impl GameLoop {
   pub fn run<S>(mut ctx: &mut Context, events: &mut EventPump, state: &mut S) -> Result<(), String> where S: EventHandler {

@@ -6,7 +6,7 @@ use sdl2::render::Texture;
 use std::path::Path;
 
 use rg2d::components::{ Entity, Transform };
-use rg2d::physics::Vector2;
+use rg2d::physics::{intersect, Vector2};
 use rg2d::graphics::{ Render, Sprite };
 use rg2d::context::Context;
 use rg2d::game_loop::{GameLoop, EventHandler};
@@ -25,23 +25,29 @@ fn main() -> Result<(), String> {
 
 
   struct MyGame {
-      player: Entity,
+      r1: Transform,
+      r2: Transform,
       movement_speed: i32,
   }
 
   impl MyGame {
     pub fn new(mut _ctx: &mut Context) -> MyGame {
     let sprite_path = Path::new("assets/bardo.png");
-    let font_path = Path::new("fonts/small_pixel.ttf");
     let texture = _ctx.texture_creator.load_texture(sprite_path).unwrap();
+
+    let r1 = Transform::new(-25, -25, 50, 50);
+    let r2 = Transform::new(250, 0, 50, 50);
+
       MyGame {
-          player: Entity::new(Sprite::new(texture, Rect::new(0, 0, 26, 36)), Transform::default()),
-          movement_speed: 2,
+          r1,
+          r2,
+          movement_speed: 5,
       }
     }
   }
+
   impl EventHandler for MyGame {
-    fn update(&mut self, _ctx: &mut Context) -> Result<(), String> {
+    fn update(&mut self, _ctx: &mut Context) {
       let mut x = 0;
       let mut y = 0;
       for key in _ctx.input.keys_current.iter() {
@@ -53,16 +59,38 @@ fn main() -> Result<(), String> {
           _ => {}
         }
       }
-      self.player.transform.position = self.player.transform.position + Vector2::new(x * self.movement_speed, y * self.movement_speed);
-      _ctx.camera.position+= Vector2::right();
-      Ok(())
+
+      if x != 0 {
+        let mut r1 = self.r1.rect;
+        r1.set_x(r1.x + x * self.movement_speed);
+        if !intersect(r1, self.r2.rect) {
+          self.r1.rect.set_x(r1.x);
+        } else if x > 0 {
+            self.r1.rect.set_right(self.r2.x());
+        } else {
+          self.r1.rect.set_x(self.r2.rect.right());
+        }
+      }
+
+      if y != 0 {
+        let mut r1 = self.r1.rect;
+        r1.set_y(r1.y + y * self.movement_speed);
+        if !intersect(r1, self.r2.rect) {
+          self.r1.rect.set_y(r1.y);
+        } else if y < 0 {
+          self.r1.rect.set_y(self.r2.rect.bottom());
+        } else {
+          self.r1.rect.set_bottom(self.r2.rect.top());
+        }
+
+      }
+      
     }
 
-    fn render(&mut self, mut _ctx: &mut Context) -> Result<(), String> {
+    fn render(&mut self, mut _ctx: &mut Context) {
         Render::clear(_ctx, Color::RGB(130, 130, 255));
-        Render::sprite(_ctx, &self.player.sprite, self.player.transform.position);
-        Render::rect(_ctx, Rect::new(0, 0, 50, 50), Color::RGB(0, 0, 255));
-        Ok(())
+        Render::rect(_ctx, &self.r1, Color::RGB(0, 0, 255));
+        Render::rect(_ctx, &self.r2, Color::RGB(0, 0, 0));
     }
   }
 

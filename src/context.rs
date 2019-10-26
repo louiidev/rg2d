@@ -13,13 +13,12 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new() -> Self {
+    fn default() -> Self {
         Camera {
             position: Vector2::default()
         }
     }
 }
-
 
 pub struct Input {
     pub keys_current: HashSet<Keycode>,
@@ -75,16 +74,19 @@ impl Context {
         let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string()).unwrap();
         let _image_context = image::init(InitFlag::PNG | InitFlag::JPG);
         let window = video_subsystem
-            .window("rg2d", 800, 600)
+            .window("rg2d", 1200, 800)
+            .resizable()
             .build()
             .expect("could not initialize video subsystem");
-        let canvas = window
+
+        let mut canvas = window
             .into_canvas()
             .software()
             .build()
             .expect("could not make a canvas");
         let texture_creator = canvas.texture_creator();
         let input = Input::new();
-        let camera = Camera::new();
+        let camera = Camera::default();
+        canvas.set_scale(0.5, 0.5);
         (Context { canvas, texture_creator, input, tff: ttf_context, camera }, sdl_context.event_pump().unwrap())
     }}

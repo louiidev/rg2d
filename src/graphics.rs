@@ -2,6 +2,7 @@ use sdl2::rect::{Point, Rect};
 use sdl2::render::Texture;
 use crate::context::Context;
 use crate::physics::Vector2;
+use crate::components::Transform;
 use sdl2::pixels::Color;
 use sdl2::render::TextureQuery;
 use sdl2::ttf::Font;
@@ -26,10 +27,10 @@ fn get_position_center_to_screen(ctx: &mut Context, position: Vector2) -> Vector
     position + Vector2::new(width as i32 / 2, height as i32 / 2) - ctx.camera.position
 }
 
-fn render_texture(ctx: &mut Context, texture: &Texture, size: Rect, position: Vector2) {
-    let screen_position = get_position_center_to_screen(ctx, position);
-    let screen_rect = Rect::from_center(Point::new(screen_position.x as i32, screen_position.y as i32), size.width(), size.height());
-    ctx.canvas.copy(&texture, size, screen_rect);
+fn render_texture(ctx: &mut Context, texture: &Texture, transform: &Transform) {
+    let screen_position = get_position_center_to_screen(ctx, transform.position());
+    let screen_rect = Rect::from_center(Point::new(screen_position.x as i32 * transform.scale as i32, screen_position.y as i32 * transform.scale as i32), transform.rect.width() * transform.scale, transform.rect.height() * transform.scale);
+    ctx.canvas.copy(&texture, transform.rect, screen_rect);
 }
 
 pub struct Render {
@@ -37,24 +38,25 @@ pub struct Render {
 }
 
 impl Render {
-    pub fn sprite(ctx: &mut Context, sprite: &Sprite, position: Vector2) {
-        render_texture(ctx, &sprite.texture, sprite.area, position);
+    pub fn sprite(ctx: &mut Context, sprite: &Sprite, transform: &Transform) {
+        render_texture(ctx, &sprite.texture, &transform);
     }
     pub fn clear(ctx: &mut Context, color: Color) {
         ctx.canvas.set_draw_color(color);
         ctx.canvas.clear();
     }
 
-    pub fn rect(ctx: &mut Context, size: Rect, color: Color) {
+    pub fn rect(ctx: &mut Context, transform: &Transform, color: Color) {
         ctx.canvas.set_draw_color(color);
-        let screen_position = get_position_center_to_screen(ctx, Vector2::new(size.x, size.y));
-        let screen_rect = Rect::new(screen_position.x, screen_position.y, size.width(), size.height());
+        let rect = transform.rect;
+        let screen_position = get_position_center_to_screen(ctx, Vector2::new(rect.x, rect.y));
+        let screen_rect = Rect::new(screen_position.x * transform.scale as i32, screen_position.y * transform.scale as i32, rect.width() * transform.scale, rect.height() * transform.scale);
         ctx.canvas.draw_rect(screen_rect);
         ctx.canvas.fill_rect(screen_rect);
     }
 
-    pub fn texture(ctx: &mut Context, texture: &Texture, size: Rect, position: Vector2) {
-        render_texture(ctx, &texture, size, position);
+    pub fn texture(ctx: &mut Context, texture: &Texture, transform: &Transform) {
+        render_texture(ctx, &texture, &transform);
     }
 
     pub fn text(ctx: &mut Context, font: Font, text: &str, position: Vector2, color: Color, size: u32) {
