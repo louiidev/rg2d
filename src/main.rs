@@ -42,13 +42,17 @@ fn main() -> Result<(), String> {
       MyGame {
           r1,
           walls: vec![
-            Transform::new(250, 0, 100, 100),
-            Transform::new(40, 200, 100, 100),
-            Transform::new(500, 32, 100, 100),
-            Transform::new(-50, 150, 100, 100),
-            Transform::new(-40, -200, 100, 100),
-            Transform::new(140, 84, 100, 100),
-            Transform::new(-400, 100, 100, 100)
+            Transform::new(250, 0, 50, 50),
+            Transform::new(40, 200, 50, 50),
+            Transform::new(500, 32, 50, 50),
+            Transform::new(-50, 150, 50, 50),
+            Transform::new(-40, -200, 50, 50),
+            Transform::new(140, 84, 50, 50),
+            Transform::new(-400, 50, 50, 50),
+            Transform::new(-600, -400, 20, 800),
+            Transform::new(580, -400, 20, 800),
+            Transform::new(-600, -400, 1200, 20),
+            Transform::new(-580, 380, 1200, 20)
           ],
           movement_speed: 5,
       }
