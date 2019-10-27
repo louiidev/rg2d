@@ -39,17 +39,3 @@ impl Transform {
 
 }
 
-pub struct Entity {
-    pub sprite: Sprite,
-    pub transform: Transform,
-}
-
-impl Entity {
-    pub fn new(sprite: Sprite, transform: Transform) -> Self {
-        Entity {
-            sprite,
-            transform
-        }
-    }
-}
-

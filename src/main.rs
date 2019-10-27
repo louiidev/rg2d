@@ -1,16 +1,16 @@
 use sdl2::image::LoadTexture;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
-use sdl2::rect::Rect;
-use sdl2::render::Texture;
 use std::path::Path;
 
-use rg2d::components::{ Entity, Transform };
-use rg2d::physics::{intersect, Vector2};
+use rg2d::components::{ Transform };
+use rg2d::physics::{Vector2};
 use rg2d::graphics::{ Render, Sprite };
 use rg2d::context::Context;
 use rg2d::game_loop::{GameLoop, EventHandler};
+use rg2d::collisions::{update_pos_x, update_pos_y};
 
+mod collisions;
 mod graphics;
 mod physics;
 mod components;
@@ -24,9 +24,11 @@ fn main() -> Result<(), String> {
   ctx.canvas.present();
 
 
+
+
   struct MyGame {
       r1: Transform,
-      r2: Transform,
+      walls: Vec<Transform>,
       movement_speed: i32,
   }
 
@@ -36,11 +38,18 @@ fn main() -> Result<(), String> {
     let texture = _ctx.texture_creator.load_texture(sprite_path).unwrap();
 
     let r1 = Transform::new(-25, -25, 50, 50);
-    let r2 = Transform::new(250, 0, 50, 50);
 
       MyGame {
           r1,
-          r2,
+          walls: vec![
+            Transform::new(250, 0, 100, 100),
+            Transform::new(40, 200, 100, 100),
+            Transform::new(500, 32, 100, 100),
+            Transform::new(-50, 150, 100, 100),
+            Transform::new(-40, -200, 100, 100),
+            Transform::new(140, 84, 100, 100),
+            Transform::new(-400, 100, 100, 100)
+          ],
           movement_speed: 5,
       }
     }
@@ -60,37 +69,26 @@ fn main() -> Result<(), String> {
         }
       }
 
-      if x != 0 {
-        let mut r1 = self.r1.rect;
-        r1.set_x(r1.x + x * self.movement_speed);
-        if !intersect(r1, self.r2.rect) {
-          self.r1.rect.set_x(r1.x);
-        } else if x > 0 {
-            self.r1.rect.set_right(self.r2.x());
-        } else {
-          self.r1.rect.set_x(self.r2.rect.right());
+      if x != 0 || y != 0 {
+        let mut pot_rect_x = self.r1.rect;
+        pot_rect_x.set_x(self.r1.x() + (x * self.movement_speed));
+        let mut pot_rect_y = self.r1.rect;
+        pot_rect_y.set_y(self.r1.y() + (y * self.movement_speed));
+        for wall in self.walls.iter() {
+          update_pos_x(&mut pot_rect_x, &wall.rect, x);
+          update_pos_y(&mut pot_rect_y, &wall.rect, y);
         }
+        self.r1.rect.set_x(pot_rect_x.x());
+        self.r1.rect.set_y(pot_rect_y.y());
       }
-
-      if y != 0 {
-        let mut r1 = self.r1.rect;
-        r1.set_y(r1.y + y * self.movement_speed);
-        if !intersect(r1, self.r2.rect) {
-          self.r1.rect.set_y(r1.y);
-        } else if y < 0 {
-          self.r1.rect.set_y(self.r2.rect.bottom());
-        } else {
-          self.r1.rect.set_bottom(self.r2.rect.top());
-        }
-
-      }
-      
     }
 
     fn render(&mut self, mut _ctx: &mut Context) {
         Render::clear(_ctx, Color::RGB(130, 130, 255));
         Render::rect(_ctx, &self.r1, Color::RGB(0, 0, 255));
-        Render::rect(_ctx, &self.r2, Color::RGB(0, 0, 0));
+        for wall in self.walls.iter() {
+           Render::rect(_ctx, &wall, Color::RGB(0, 0, 0));
+        }
     }
   }
 

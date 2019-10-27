@@ -2,7 +2,7 @@ use std::ops::Add;
 use std::ops::Sub;
 use std::ops::Mul;
 use std::ops::AddAssign;
-use sdl2::rect::Rect;
+
 
 #[derive(Copy, Clone)]
 pub struct Vector2 {
@@ -36,13 +36,6 @@ impl Vector2 {
 
     pub fn down() -> Self {
         Vector2::new(0, -1)
-    }
-
-    pub fn multiple_by(self, other: i32) -> Self {
-        Self {
-            x: self.x * other,
-            y: self.y * other
-        }
     }
 }
 
@@ -86,17 +79,15 @@ impl Mul for Vector2 {
     }
 }
 
+pub fn multiple_vector(vector: Vector2, amount: i32) -> Vector2 {
+    Vector2::new(vector.x * amount, vector.y * amount)
+}
+
 pub fn distance_between(v1: Vector2, v2: Vector2) {
     let x = v1.x - v2.x;
     let y = v1.y - v2.y;
 
     // sqrt(x * x +  y * y)
-}
-
-pub fn intersect(base: Rect, target: Rect) -> bool {
-    if base.right() <= target.x || base.x >= target.right() { return false }
-    if base.bottom() <= target.top() || base.top() >= target.bottom() { return false }
-    true
 }
 
 #[cfg(test)]
