@@ -1,11 +1,13 @@
 use sdl2::image::{self, InitFlag};
 use sdl2::render::Canvas;
 use sdl2::EventPump;
+use sdl2::rect::Point;
 use sdl2::render::{TextureCreator};
 use std::collections::HashSet;
 use sdl2::keyboard::Keycode;
 use sdl2::ttf::Sdl2TtfContext;
 use crate::physics::Vector2;
+use sdl2::mouse::MouseState;
 
 
 pub struct Camera {
@@ -23,7 +25,8 @@ impl Camera {
 pub struct Input {
     pub keys_current: HashSet<Keycode>,
     keys_down: HashSet<Keycode>,
-    keys_up: HashSet<Keycode>
+    keys_up: HashSet<Keycode>,
+    mouse_state: MouseState,
 }
 
 impl Input {
@@ -31,7 +34,8 @@ impl Input {
         Input {
             keys_current: HashSet::new(),
             keys_down: HashSet::new(),
-            keys_up: HashSet::new()
+            keys_up: HashSet::new(),
+            mouse_state: MouseState::from_sdl_state(0)
         }
     }
 }
@@ -49,6 +53,11 @@ impl Input {
         self.keys_up.contains(&key)
     }
 
+    pub fn set_mouse_state(&mut self, events: &EventPump) {
+        let state = events.mouse_state();
+        self.mouse_state = state;
+    }
+
     pub fn set_keys(&mut self, events: &EventPump) {
         let keys = events.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode).collect();
         let new_keys = &keys - &self.keys_current;
@@ -56,6 +65,10 @@ impl Input {
         self.keys_down = new_keys;
         self.keys_up = old_keys;
         self.keys_current = keys;
+    }
+
+    pub fn get_mouse_pos(&mut self) -> Point {
+        Point::new(self.mouse_state.x(), self.mouse_state.y())
     }
 }
 

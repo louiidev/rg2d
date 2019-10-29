@@ -20,6 +20,7 @@ impl GameLoop {
             };
         }
         ctx.input.set_keys(&events);
+        ctx.input.set_mouse_state(&events);
         state.update(&mut ctx);
         ctx.canvas.clear();
         state.render(&mut ctx);

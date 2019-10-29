@@ -2,13 +2,14 @@ use sdl2::image::LoadTexture;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use std::path::Path;
+use sdl2::rect::{Rect, Point};
 
 use rg2d::components::{ Transform };
 use rg2d::physics::{Vector2};
 use rg2d::graphics::{ Render, Sprite };
 use rg2d::context::Context;
 use rg2d::game_loop::{GameLoop, EventHandler};
-use rg2d::collisions::{update_pos_x, update_pos_y};
+use rg2d::collisions::{update_pos_x, update_pos_y, raycast};
 
 mod collisions;
 mod graphics;
@@ -22,9 +23,6 @@ fn main() -> Result<(), String> {
   ctx.canvas.set_draw_color(Color::RGB(130, 130, 255));
   ctx.canvas.clear();
   ctx.canvas.present();
-
-
-
 
   struct MyGame {
       r1: Transform,
@@ -74,6 +72,7 @@ fn main() -> Result<(), String> {
       }
 
       if x != 0 || y != 0 {
+        // example of collision handling
         let mut pot_rect_x = self.r1.rect;
         pot_rect_x.set_x(self.r1.x() + (x * self.movement_speed));
         let mut pot_rect_y = self.r1.rect;

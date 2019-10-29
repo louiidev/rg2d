@@ -2,7 +2,7 @@ use std::ops::Add;
 use std::ops::Sub;
 use std::ops::Mul;
 use std::ops::AddAssign;
-
+use sdl2::rect::{Point, Rect};
 
 #[derive(Copy, Clone)]
 pub struct Vector2 {
@@ -79,26 +79,6 @@ impl Mul for Vector2 {
     }
 }
 
-pub fn multiple_vector(vector: Vector2, amount: i32) -> Vector2 {
-    Vector2::new(vector.x * amount, vector.y * amount)
-}
-
-pub fn distance_between(v1: Vector2, v2: Vector2) {
-    let x = v1.x - v2.x;
-    let y = v1.y - v2.y;
-
-    // sqrt(x * x +  y * y)
-}
-
-#[cfg(test)]
-mod tests {
-    // Note this useful idiom: importing names from outer (for mod tests) scope.
-    use super::*;
-
-    #[test]
-    fn test_intersect() {
-        let r1 = Rect::new(0, 5, 5, 5);
-        let r2 = Rect::new(-5, 5, 5, 5);
-        assert_eq!(intersect(r1, r2), false);
-    }
+fn center_rect(rect: &Rect) -> Point {
+    Point::new(rect.x + (rect.width() as i32 / 2), rect.y + (rect.height() as i32 / 2))
 }
