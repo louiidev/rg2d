@@ -21,12 +21,6 @@ impl Sprite {
     }
 }
 
-fn get_position_center_to_screenP(ctx: &mut Context, position: Point) -> Point {
-    let (width, height) = ctx.canvas.output_size().unwrap();
-    println!("{0} {1}", position.x + (width as i32 / 2), position.y + (height as i32 / 2));
-    Point::new(position.x + (width as i32 / 2), position.y + (height as i32 / 2))
-}
-
 fn get_position_center_to_screen(ctx: &mut Context, position: Point) -> Point {
     let (width, height) = ctx.canvas.output_size().unwrap();
     position + Point::new(width as i32 / 2, height as i32 / 2) - ctx.camera.position
@@ -78,8 +72,8 @@ impl Render {
 
     pub fn line(ctx: &mut Context, p1: Point, p2: Point, color: Color) {
         ctx.canvas.set_draw_color(color);
-        let pos1 = get_position_center_to_screenP(ctx, p1);
-        let pos2 = get_position_center_to_screenP(ctx, p2);
+        let pos1 = get_position_center_to_screen(ctx, p1);
+        let pos2 = get_position_center_to_screen(ctx, p2);
         ctx.canvas.draw_line(pos1 * 2, pos2 * 2);
     }
 

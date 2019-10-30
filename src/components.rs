@@ -1,8 +1,7 @@
 
 
 use crate::graphics::Sprite;
-use crate::physics::Vector2;
-use sdl2::rect::Rect;
+use sdl2::rect::{Point, Rect};
 
 pub struct Transform {
   pub rect: Rect,
@@ -17,8 +16,8 @@ impl Transform {
     }
   }
 
-  pub fn position(&self) -> Vector2 {
-    Vector2::new(self.rect.x, self.rect.y)
+  pub fn position(&self) -> Point {
+    Point::new(self.rect.x, self.rect.y)
   }
 
   pub fn x(&self) -> i32 {
