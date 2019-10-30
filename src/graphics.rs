@@ -1,7 +1,6 @@
 use sdl2::rect::{Point, Rect};
 use sdl2::render::Texture;
 use crate::context::Context;
-use crate::physics::Vector2;
 use crate::components::Transform;
 use sdl2::pixels::Color;
 use sdl2::render::TextureQuery;
@@ -28,9 +27,9 @@ fn get_position_center_to_screenP(ctx: &mut Context, position: Point) -> Point {
     Point::new(position.x + (width as i32 / 2), position.y + (height as i32 / 2))
 }
 
-fn get_position_center_to_screen(ctx: &mut Context, position: Vector2) -> Vector2 {
+fn get_position_center_to_screen(ctx: &mut Context, position: Point) -> Point {
     let (width, height) = ctx.canvas.output_size().unwrap();
-    position + Vector2::new(width as i32 / 2, height as i32 / 2) - ctx.camera.position
+    position + Point::new(width as i32 / 2, height as i32 / 2) - ctx.camera.position
 }
 
 fn render_texture(ctx: &mut Context, texture: &Texture, transform: &Transform) {
@@ -55,7 +54,7 @@ impl Render {
     pub fn rect(ctx: &mut Context, transform: &Transform, color: Color) {
         ctx.canvas.set_draw_color(color);
         let rect = transform.rect;
-        let screen_position = get_position_center_to_screen(ctx, Vector2::new(rect.x, rect.y));
+        let screen_position = get_position_center_to_screen(ctx, Point::new(rect.x, rect.y));
         let screen_rect = Rect::new(screen_position.x * transform.scale as i32, screen_position.y * transform.scale as i32, rect.width() * transform.scale, rect.height() * transform.scale);
         ctx.canvas.draw_rect(screen_rect);
         ctx.canvas.fill_rect(screen_rect);
@@ -65,7 +64,7 @@ impl Render {
         render_texture(ctx, &texture, &transform);
     }
 
-    pub fn text(ctx: &mut Context, font: Font, text: &str, position: Vector2, color: Color, size: u32) {
+    pub fn text(ctx: &mut Context, font: Font, text: &str, position: Point, color: Color, size: u32) {
         let surface = font.render(&text)
         .blended(color).map_err(|e| e.to_string()).unwrap();
     

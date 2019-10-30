@@ -6,18 +6,17 @@ use sdl2::render::{TextureCreator};
 use std::collections::HashSet;
 use sdl2::keyboard::Keycode;
 use sdl2::ttf::Sdl2TtfContext;
-use crate::physics::Vector2;
 use sdl2::mouse::MouseState;
 
 
 pub struct Camera {
-    pub position: Vector2
+    pub position: Point
 }
 
 impl Camera {
     fn default() -> Self {
         Camera {
-            position: Vector2::default()
+            position: Point::new(0, 0)
         }
     }
 }

@@ -5,7 +5,6 @@ use std::path::Path;
 use sdl2::rect::{Rect, Point};
 
 use rg2d::components::{ Transform };
-use rg2d::physics::{Vector2};
 use rg2d::graphics::{ Render, Sprite };
 use rg2d::context::Context;
 use rg2d::game_loop::{GameLoop, EventHandler};
