@@ -1,7 +1,4 @@
-use crate::physics::Vector2;
-use crate::components::Transform;
 use sdl2::rect::{Point, Rect};
-
 
 
 pub fn update_pos_x(r1: &mut Rect, r2: &Rect, x: i32) {
