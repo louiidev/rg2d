@@ -1,7 +1,21 @@
 
 
-use crate::graphics::Sprite;
+use sdl2::render::Texture;
 use sdl2::rect::{Point, Rect};
+
+pub struct Sprite {
+    pub texture: Texture, // sprite texture
+    pub area: Rect // area of sprite to render 
+}
+
+impl Sprite {
+    pub fn new(texture: Texture, area: Rect) -> Self {
+        Sprite {
+            texture,
+            area
+        }
+    }
+}
 
 pub struct Transform {
   pub rect: Rect,

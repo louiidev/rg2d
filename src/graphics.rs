@@ -1,25 +1,11 @@
 use sdl2::rect::{Point, Rect};
 use sdl2::render::Texture;
 use crate::context::Context;
-use crate::components::Transform;
+use crate::components::{Sprite, Transform};
 use sdl2::pixels::Color;
 use sdl2::render::TextureQuery;
 use sdl2::ttf::Font;
 
-
-pub struct Sprite {
-    pub texture: Texture, // sprite texture
-    pub area: Rect // area of sprite to render 
-}
-
-impl Sprite {
-    pub fn new(texture: Texture, area: Rect) -> Self {
-        Sprite {
-            texture,
-            area
-        }
-    }
-}
 
 fn get_position_center_to_screen(ctx: &mut Context, position: Point) -> Point {
     let (width, height) = ctx.canvas.output_size().unwrap();

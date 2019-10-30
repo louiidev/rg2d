@@ -4,8 +4,8 @@ use sdl2::pixels::Color;
 use std::path::Path;
 use sdl2::rect::{Rect, Point};
 
-use rg2d::components::{ Transform };
-use rg2d::graphics::{ Render, Sprite };
+use rg2d::components::{ Transform, Sprite };
+use rg2d::graphics::{ Render };
 use rg2d::context::Context;
 use rg2d::game_loop::{GameLoop, EventHandler};
 use rg2d::collisions::{update_pos_x, update_pos_y, raycast};
