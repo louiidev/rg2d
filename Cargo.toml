@@ -10,3 +10,5 @@ edition = "2018"
 version = "0.32.2"
 features = ["image", "unsafe_textures", "ttf"]
 
+[dependencies.gl]
+git = "https://github.com/bjz/gl-rs"

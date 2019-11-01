@@ -71,6 +71,15 @@ impl Input {
     }
 }
 
+fn find_sdl_gl_driver() -> Option<u32> {
+    for (index, item) in sdl2::render::drivers().enumerate() {
+        if item.name == "opengl" {
+            return Some(index as u32);
+        }
+    }
+    None
+}
+
 pub struct Context {
     pub canvas: Canvas<sdl2::video::Window>,
     pub texture_creator: TextureCreator<sdl2::video::WindowContext>,
@@ -87,15 +96,18 @@ impl Context {
         let _image_context = image::init(InitFlag::PNG | InitFlag::JPG);
         let window = video_subsystem
             .window("rg2d", 1200, 800)
+            .opengl()
             .resizable()
             .build()
             .expect("could not initialize video subsystem");
 
         let mut canvas = window
             .into_canvas()
-            .software()
+            .index(find_sdl_gl_driver().unwrap())
             .build()
             .expect("could not make a canvas");
+        gl::load_with(|name| video_subsystem.gl_get_proc_address(name) as *const _);
+        canvas.window().gl_set_context_to_current();
         let texture_creator = canvas.texture_creator();
         let input = Input::new();
         let camera = Camera::default();
