@@ -80,6 +80,26 @@ fn find_sdl_gl_driver() -> Option<u32> {
     None
 }
 
+pub struct Config {
+    pub width: u32,
+    pub height: u32,
+    pub canvasScale: f32,
+    pub title: String
+}
+
+
+fn parse_config(config: Option<Config>) -> Config {
+    match config {
+        Some(res) => res,
+        None => Config {
+            width: 1200,
+            height: 800,
+            canvasScale: 0.5,
+            title: "rg2d".to_string()
+        }
+    }
+}
+
 pub struct Context {
     pub canvas: Canvas<sdl2::video::Window>,
     pub texture_creator: TextureCreator<sdl2::video::WindowContext>,
@@ -89,13 +109,14 @@ pub struct Context {
 }
 
 impl Context {
-    pub fn new() -> (Context, EventPump) {
+    pub fn new(config: Option<Config>) -> (Context, EventPump) {
+        let _config = parse_config(config);
         let sdl_context = sdl2::init().unwrap();
         let video_subsystem = sdl_context.video().unwrap();
         let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string()).unwrap();
         let _image_context = image::init(InitFlag::PNG | InitFlag::JPG);
         let window = video_subsystem
-            .window("rg2d", 1200, 800)
+            .window(&_config.title, _config.width, _config.height)
             .opengl()
             .resizable()
             .build()
@@ -111,6 +132,6 @@ impl Context {
         let texture_creator = canvas.texture_creator();
         let input = Input::new();
         let camera = Camera::default();
-        canvas.set_scale(0.5, 0.5);
+        canvas.set_scale(_config.canvasScale, _config.canvasScale);
         (Context { canvas, texture_creator, input, tff: ttf_context, camera }, sdl_context.event_pump().unwrap())
     }}
