@@ -7,7 +7,7 @@ pub struct GameLoop {}
 
 pub trait EventHandler {
     fn update(&mut self, _ctx: &mut Context);
-    fn render(&mut self, _ctx: &mut Context);
+    fn render(&self, _ctx: &Context);
 }
 
 impl GameLoop {
@@ -23,7 +23,7 @@ impl GameLoop {
         ctx.input.set_mouse_state(&events);
         state.update(&mut ctx);
         ctx.canvas.clear();
-        state.render(&mut ctx);
+        state.render(&ctx);
         ctx.canvas.present();
         std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
     }
