@@ -2,11 +2,12 @@ use sdl2::image::{self, InitFlag};
 use sdl2::render::Canvas;
 use sdl2::EventPump;
 use sdl2::rect::Point;
-use sdl2::render::{TextureCreator};
+use sdl2::render::{Texture, TextureCreator};
+use sdl2::ttf::{Sdl2TtfContext, Font};
 use std::collections::HashSet;
 use sdl2::keyboard::Keycode;
-use sdl2::ttf::Sdl2TtfContext;
 use sdl2::mouse::MouseState;
+use std::collections::HashMap;
 
 
 pub struct Camera {
@@ -99,6 +100,26 @@ fn parse_config(config: Option<Config>) -> Config {
         }
     }
 }
+
+pub struct ResourceManager<'t> {
+    texture_loader: &'t TextureCreator<sdl2::video::WindowContext>,
+    font_loader: &'t Sdl2TtfContext,
+    pub textures: HashMap<&'static str, Texture<'t>>,
+    pub fonts: HashMap<&'static str, Font<'t, 'static>>
+}
+
+impl<'t> ResourceManager<'t> {
+    pub fn new(texture_loader: &'t TextureCreator<sdl2::video::WindowContext>, font_loader: &'t Sdl2TtfContext) -> ResourceManager<'t> {
+        
+        ResourceManager {
+            texture_loader,
+            font_loader,
+            textures: HashMap::default(),
+            fonts: HashMap::default()
+        }
+    }
+}
+
 
 pub struct Context {
     pub canvas: Canvas<sdl2::video::Window>,

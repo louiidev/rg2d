@@ -13,8 +13,8 @@ fn get_position_center_to_screen(ctx: &mut Context, position: Point) -> Point {
 }
 
 fn render_texture(ctx: &mut Context, texture: &Texture, transform: &Transform) {
-    let screen_position = get_position_center_to_screen(ctx, transform.position());
-    let screen_rect = Rect::from_center(Point::new(screen_position.x as i32 * transform.scale as i32, screen_position.y as i32 * transform.scale as i32), transform.rect.width() * transform.scale, transform.rect.height() * transform.scale);
+    let screen_position = get_position_center_to_screen(ctx, transform.position);
+    let screen_rect = Rect::new(screen_position.x * transform.scale as i32, screen_position.y * transform.scale as i32, transform.rect.width() * transform.scale, transform.rect.height() * transform.scale);
     ctx.canvas.copy(&texture, transform.rect, screen_rect);
 }
 
@@ -34,7 +34,7 @@ impl Render {
     pub fn rect(ctx: &mut Context, transform: &Transform, color: Color) {
         ctx.canvas.set_draw_color(color);
         let rect = transform.rect;
-        let screen_position = get_position_center_to_screen(ctx, Point::new(rect.x, rect.y));
+        let screen_position = get_position_center_to_screen(ctx, transform.position);
         let screen_rect = Rect::new(screen_position.x * transform.scale as i32, screen_position.y * transform.scale as i32, rect.width() * transform.scale, rect.height() * transform.scale);
         ctx.canvas.draw_rect(screen_rect);
         ctx.canvas.fill_rect(screen_rect);

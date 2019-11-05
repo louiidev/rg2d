@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies.sdl2]
 version = "0.32.2"
-features = ["image", "unsafe_textures", "ttf"]
+features = ["image", "ttf"]
 
 [dependencies.gl]
 git = "https://github.com/bjz/gl-rs"
