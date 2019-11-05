@@ -1,9 +1,9 @@
 // use sdl2::image::LoadTexture;
 // use sdl2::keyboard::Keycode;
 // use sdl2::pixels::Color;
-// use std::path::Path;
+use std::path::Path;
 // use sdl2::rect::{Rect, Point};
-
+use sdl2::image::LoadTexture;
 use rg2d::components::{ Transform, Sprite };
 use rg2d::graphics::{ Render };
 use rg2d::context::{ResourceManager, Context};
@@ -127,7 +127,7 @@ fn main() {
 
     impl <'t> EventHandler for MyGame <'t> {
         fn update(&mut self, _ctx: &mut Context) {
-
+            // self.resourceManager.textures.
         }
 
         fn render(&self, _ctx: &mut Context) {

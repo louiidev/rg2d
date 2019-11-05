@@ -8,7 +8,8 @@ use std::collections::HashSet;
 use sdl2::keyboard::Keycode;
 use sdl2::mouse::MouseState;
 use std::collections::HashMap;
-
+use sdl2::image::LoadTexture;
+use std::path::Path;
 
 pub struct Camera {
     pub position: Point
@@ -102,21 +103,38 @@ fn parse_config(config: Option<Config>) -> Config {
 }
 
 pub struct ResourceManager<'t> {
-    texture_loader: &'t TextureCreator<sdl2::video::WindowContext>,
-    font_loader: &'t Sdl2TtfContext,
     pub textures: HashMap<&'static str, Texture<'t>>,
-    pub fonts: HashMap<&'static str, Font<'t, 'static>>
+    pub fonts: HashMap<&'static str, Font<'t, 'static>>,
+    pub texture_loader: &'t TextureCreator<sdl2::video::WindowContext>,
+    pub font_loader: &'t Sdl2TtfContext
 }
 
 impl<'t> ResourceManager<'t> {
     pub fn new(texture_loader: &'t TextureCreator<sdl2::video::WindowContext>, font_loader: &'t Sdl2TtfContext) -> ResourceManager<'t> {
-        
         ResourceManager {
             texture_loader,
             font_loader,
             textures: HashMap::default(),
             fonts: HashMap::default()
         }
+    }
+
+    pub fn get_font(&mut self, name: &'static str) -> &Font<'t, 'static> {
+        if self.textures.contains_key(name) {
+            return self.fonts.get(name).unwrap();
+        }
+        let font = self.font_loader.load_font(Path::new(&format!("assets/{}", &name)), 16).unwrap();
+        self.fonts.insert(&name, font);
+        self.fonts.get(name).unwrap()
+    }
+
+    pub fn get_texture(&mut self, name: &'static str) -> &Texture<'t> {
+        if self.textures.contains_key(name) {
+            return self.textures.get(name).unwrap();
+        }
+        let texture = self.texture_loader.load_texture(Path::new(&format!("assets/{}", &name))).unwrap();
+        self.textures.insert(&name, texture);
+        self.textures.get(name).unwrap()
     }
 }
 
