@@ -118,16 +118,16 @@ impl<'t> ResourceManager<'t> {
             fonts: HashMap::default()
         }
     }
-
+    // @TODO: add error handling if font isn't loaded
     pub fn get_font(&mut self, name: &'static str) -> &Font<'t, 'static> {
         if self.textures.contains_key(name) {
             return self.fonts.get(name).unwrap();
         }
-        let font = self.font_loader.load_font(Path::new(&format!("assets/{}", &name)), 16).unwrap();
+        let font = self.font_loader.load_font(Path::new(&format!("fonts/{}", &name)), 16).unwrap();
         self.fonts.insert(&name, font);
         self.fonts.get(name).unwrap()
     }
-
+    // @TODO: add error handling if texture isn't loaded
     pub fn get_texture(&mut self, name: &'static str) -> &Texture<'t> {
         if self.textures.contains_key(name) {
             return self.textures.get(name).unwrap();
