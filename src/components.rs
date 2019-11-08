@@ -21,22 +21,5 @@ impl Transform {
       scale: 2
     }
   }
-
-  pub fn x(&self) -> i32 {
-    self.rect.x
-  }
-
-  pub fn y(&self) -> i32 {
-    self.rect.y
-  }
-
-  pub fn width(&self) -> u32 {
-   self.rect.width()
-  }
-
-  pub fn height(&self) -> u32 {
-   self.rect.height()
-  }
-
 }
 

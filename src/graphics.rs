@@ -47,8 +47,8 @@ impl Render {
     }
 
     pub fn font_to_texture(
-        texture_creator: TextureCreator<WindowContext>,
-        font: Font,
+        texture_creator: &TextureCreator<WindowContext>,
+        font: &Font,
         text: &str,
         color: Color,
     ) -> Texture {
