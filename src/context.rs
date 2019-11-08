@@ -103,7 +103,7 @@ fn parse_config(config: Option<Config>) -> Config {
 }
 
 pub struct ResourceManager<'t> {
-    pub textures: HashMap<&'static str, Texture<'t>>,
+    pub textures: HashMap<&'static str, Texture>,
     pub fonts: HashMap<&'static str, Font<'t, 'static>>,
     pub texture_loader: &'t TextureCreator<sdl2::video::WindowContext>,
     pub font_loader: &'t Sdl2TtfContext
@@ -128,7 +128,7 @@ impl<'t> ResourceManager<'t> {
         self.fonts.get(name).unwrap()
     }
     // @TODO: add error handling if texture isn't loaded
-    pub fn get_texture(&mut self, name: &'static str) -> &Texture<'t> {
+    pub fn get_texture(&mut self, name: &'static str) -> &Texture {
         if self.textures.contains_key(name) {
             return self.textures.get(name).unwrap();
         }
@@ -141,9 +141,7 @@ impl<'t> ResourceManager<'t> {
 
 pub struct Context {
     pub canvas: Canvas<sdl2::video::Window>,
-    pub texture_creator: TextureCreator<sdl2::video::WindowContext>,
     pub input: Input,
-    pub tff: Sdl2TtfContext,
     pub camera: Camera
 }
 
@@ -152,7 +150,6 @@ impl Context {
         let _config = parse_config(config);
         let sdl_context = sdl2::init().unwrap();
         let video_subsystem = sdl_context.video().unwrap();
-        let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string()).unwrap();
         let _image_context = image::init(InitFlag::PNG | InitFlag::JPG);
         let window = video_subsystem
             .window(&_config.title, _config.width, _config.height)
@@ -168,9 +165,8 @@ impl Context {
             .expect("could not make a canvas");
         gl::load_with(|name| video_subsystem.gl_get_proc_address(name) as *const _);
         canvas.window().gl_set_context_to_current();
-        let texture_creator = canvas.texture_creator();
         let input = Input::new();
         let camera = Camera::default();
         canvas.set_scale(_config.canvasScale, _config.canvasScale);
-        (Context { canvas, texture_creator, input, tff: ttf_context, camera }, sdl_context.event_pump().unwrap())
+        (Context { canvas, input, camera }, sdl_context.event_pump().unwrap())
     }}

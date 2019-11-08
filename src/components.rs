@@ -3,20 +3,20 @@
 use sdl2::render::Texture;
 use sdl2::rect::{Point, Rect};
 
-pub struct Sprite <'t> {
-  pub texture: Texture<'t>
+pub struct Sprite {
+  pub texture: Texture
 }
 
 pub struct Transform {
   pub position: Point,
-  pub rect: Rect,
+  pub size: Rect,
   pub scale: u32,
 }
 
 impl Transform {
-  pub fn new(rect: Rect, position: Point) -> Self {
+  pub fn new(size: Rect, position: Point) -> Self {
     Transform {
-      rect,
+      size,
       position,
       scale: 2
     }
