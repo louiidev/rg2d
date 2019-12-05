@@ -1,7 +1,7 @@
 use gl;
+use nalgebra_glm::{Mat4, Vec2};
 use std;
 use std::ffi::{CStr, CString};
-use nalgebra_glm::{ Vec2, Mat4 };
 
 pub struct Program {
     pub id: gl::types::GLuint,
@@ -236,22 +236,37 @@ impl Renderer {
             gl::ClearColor(r, g, b, a);
         }
     }
-    
-    pub fn set_projection(shader_id: gl::types::GLuint, width: u32, height: u32, position: Vec2) {
+    pub fn set_projection(shader_id: gl::types::GLuint, width: u32, height: u32) {
         unsafe {
             gl::UseProgram(shader_id);
         }
-        let projection = nalgebra_glm::ortho(position.x, width as f32 + position.x, height as f32 + position.y, position.y, -1.0, 1.0);
+        let projection = nalgebra_glm::ortho(0.0, width as f32, height as f32, 0.0, -1.0, 100.0);
         let cname = CString::new("projection").expect("expected uniform name to have no nul bytes");
         unsafe {
             gl::UniformMatrix4fv(
-                gl::GetUniformLocation(
-                    shader_id,
-                    cname.as_bytes_with_nul().as_ptr() as *const i8,
-                ),
+                gl::GetUniformLocation(shader_id, cname.as_bytes_with_nul().as_ptr() as *const i8),
                 1,
                 gl::FALSE,
                 nalgebra_glm::value_ptr(&projection).as_ptr(),
+            );
+        }
+    }
+
+    pub fn set_view(shader_id: gl::types::GLuint) {
+        let camera_pos = nalgebra_glm::vec3(5.0, 5.0, 3.0);
+        let camera_front = nalgebra_glm::vec3(0.0, 0.0, -1.0); 
+        let view = nalgebra_glm::look_at(
+            &camera_pos,
+            &(camera_pos + camera_front),
+            &nalgebra_glm::vec3(0.0, 1.0, 0.0),
+        );
+        let cname = CString::new("view").expect("expected uniform name to have no nul bytes");
+        unsafe {
+            gl::UniformMatrix4fv(
+                gl::GetUniformLocation(shader_id, cname.as_bytes_with_nul().as_ptr() as *const i8),
+                1,
+                gl::FALSE,
+                nalgebra_glm::value_ptr(&view).as_ptr(),
             );
         }
     }
@@ -262,7 +277,6 @@ impl Renderer {
     pub fn rect(rect: &gl_entity, position: Vec2, size: Vec2) {
         unsafe {
             gl::UseProgram(rect.program_id);
-            
             let mut model = Mat4::identity();
             model =
                 nalgebra_glm::translate(&model, &nalgebra_glm::vec3(position.x, position.y, 0.0));
@@ -271,15 +285,14 @@ impl Renderer {
                 &model,
                 &nalgebra_glm::vec3(0.5 * size.x, 0.5 * size.y, 0.0),
             );
-            model = nalgebra_glm::rotate(&model, 0.0, &nalgebra_glm::vec3(0.0, 0.0, 1.0)); 
+            model = nalgebra_glm::rotate(&model, 0.0, &nalgebra_glm::vec3(0.0, 0.0, 1.0));
             model = nalgebra_glm::translate(
                 &model,
                 &nalgebra_glm::vec3(-0.5 * size.x, -0.5 * size.y, 0.0),
             );
 
             model = nalgebra_glm::scale(&model, &nalgebra_glm::vec3(size.x, size.y, 1.0));
-            let cname =
-                CString::new("model").expect("expected uniform name to have no nul bytes");
+            let cname = CString::new("model").expect("expected uniform name to have no nul bytes");
             gl::UniformMatrix4fv(
                 gl::GetUniformLocation(
                     rect.program_id,

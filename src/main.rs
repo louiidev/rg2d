@@ -75,11 +75,12 @@ fn main() {
     let shader_program = Program::from_shaders(&[vert_shader, frag_shader]).unwrap();
     let rect = Renderer::create_rect(shader_program.id);
     let (width, height) = ctx.window.size();
-    Renderer::set_projection(shader_program.id, width, height, nalgebra_glm::vec2(0.0, 0.0));
+    Renderer::set_projection(shader_program.id, width, height);
+    Renderer::set_view(shader_program.id);
 
     impl EventHandler for MyGame {
         fn update(&mut self, ctx: &mut Context) {
-            let (width, height) = ctx.window.size();
+            let (width, _height) = ctx.window.size();
             if self.position.x > width as f32 - 25.0 ||  self.position.x < 25.0 {
                 self.direction = -self.direction;
             }
