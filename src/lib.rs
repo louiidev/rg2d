@@ -4,3 +4,4 @@ pub mod graphics;
 pub mod components;
 pub mod game_loop;
 pub mod collisions;
+pub mod render_gl;

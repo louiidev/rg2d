@@ -20,6 +20,13 @@ pub fn lerp(position: i32, target: i32, speed: f32) -> i32 {
     position + new_pos as i32
 }
 
+pub fn lerp_point(position: Point, target: Point, speed: f32) -> Point {
+    Point::new(
+        lerp(position.x, target.x, speed),
+        lerp(position.y, target.y, speed)
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

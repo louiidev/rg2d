@@ -1,143 +1,110 @@
-// use sdl2::image::LoadTexture;
-// use sdl2::keyboard::Keycode;
-// use sdl2::pixels::Color;
-use std::path::Path;
-// use sdl2::rect::{Rect, Point};
-use sdl2::image::LoadTexture;
-use rg2d::components::{ Transform, Sprite };
-use rg2d::graphics::{ Render };
-use rg2d::context::{ResourceManager, Context};
-use rg2d::game_loop::{GameLoop, EventHandler};
-use rg2d::collisions::{update_pos_x, update_pos_y, raycast};
+use image::imageops::{ flip_vertical};
+use image::{DynamicImage, RgbaImage};
+use rg2d::context::{ Context};
+use rg2d::game_loop::{EventHandler, GameLoop};
+use rg2d::render_gl::{Program, Shader, Renderer, gl_entity};
+use std::ffi::c_void;
+use std::ffi::{CString};
 
-// mod collisions;
-// mod graphics;
-// mod physics;
-// mod components;
-// mod context;
-// mod game_loop;
+fn build_opengl_mipmapped_texture(image: RgbaImage) -> gl::types::GLuint {
+    unsafe {
+        let mut texture_id: gl::types::GLuint = 0;
+        gl::GenTextures(1, &mut texture_id);
+        gl::BindTexture(gl::TEXTURE_2D, texture_id);
 
-// const GRAVITY: i32 = 4;
-// const MOVEMENT_SPEED: i32 = 6;
+        // gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::REPEAT as i32);	
+        // gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::REPEAT as i32);
 
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST as i32);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST as i32);
+        let width = image.width();
+        let height = image.height();
+        let img_data = image.into_raw();
+        let img_ptr = img_data.as_ptr() as *const c_void;
+        gl::TexImage2D(
+            gl::TEXTURE_2D,
+            0,
+            gl::RGBA as i32,
+            width as i32,
+            height as i32,
+            0,
+            gl::RGBA,
+            gl::UNSIGNED_BYTE,
+            img_ptr,
+        );
+        gl::GenerateMipmap(gl::TEXTURE_2D);
 
-// fn handle_movement(rect: &mut Rect, velocity: Point) -> (Rect, Rect) {
-//       let mut pot_rect_x = Rect::new(rect.x, rect.y, rect.width(), rect.height());
-//       pot_rect_x.set_x(pot_rect_x.x() + (velocity.x * MOVEMENT_SPEED));
-//       let mut pot_rect_y =  Rect::new(rect.x, rect.y, rect.width(), rect.height());
-//       let y = if velocity.y != 0 {
-//         velocity.y
-//       } else {
-//         GRAVITY
-//       };
-//       pot_rect_y.set_y(pot_rect_x.y() + y);
-//       (pot_rect_x, pot_rect_y)
-// }
+        // gl::BindTexture(gl::TEXTURE_2D, 0);
 
+        texture_id
+    }
+}
 
-
-// fn main() -> Result<(), String> {
-//   let (mut ctx, mut event_pump) = Context::new();
-//   ctx.canvas.set_draw_color(Color::RGB(130, 130, 255));
-//   ctx.canvas.clear();
-//   ctx.canvas.present();
-
-//   struct MyGame {
-//       player: Transform,
-//       walls: Vec<Transform>,
-//   }
-
-//   impl MyGame {
-//     pub fn new(mut _ctx: &mut Context) -> MyGame {
-//     let sprite_path = Path::new("assets/bardo.png");
-//     let texture = _ctx.texture_creator.load_texture(sprite_path).unwrap();
-
-//     let player = Transform::new(-25, -25, 50, 50);
-
-//       MyGame {
-//           player,
-//           walls: vec![
-//             Transform::new(250, 0, 50, 50),
-//             Transform::new(40, 200, 50, 50),
-//             Transform::new(500, 32, 50, 50),
-//             Transform::new(-50, 150, 50, 50),
-//             Transform::new(-40, -200, 50, 50),
-//             Transform::new(140, 84, 50, 50),
-//             Transform::new(-400, 50, 50, 50),
-//             Transform::new(-600, -400, 20, 800),
-//             Transform::new(580, -400, 20, 800),
-//             Transform::new(-600, -400, 1200, 20),
-//             Transform::new(-580, 380, 1200, 20)
-//           ],
-//       }
-//     }
-//   }
-
-//   impl EventHandler for MyGame {
-//     fn update(&mut self, _ctx: &mut Context) {
-//       let mut velocity = Point::new(0, GRAVITY);
-//       for key in _ctx.input.keys_current.iter() {
-//         match key {
-//           Keycode::A | Keycode::Left => velocity.x = -1,
-//           Keycode::D | Keycode::Right => velocity.x = 1,
-//           Keycode::Up | Keycode::Space => velocity.y = -10,
-//           _ => {}
-//         }
-//       }
-//         let (mut pot_rect_x, mut pot_rect_y) = handle_movement(&mut self.player.rect, velocity);
-//         // example of collision handling
-//         for wall in self.walls.iter() {
-//           update_pos_x(&mut pot_rect_x, &wall.rect, velocity.x);
-//           update_pos_y(&mut pot_rect_y, &wall.rect, velocity.y);
-//         }
-//         self.player.rect.set_x(pot_rect_x.x());
-//         self.player.rect.set_y(pot_rect_y.y());
-
-        
-//     }
-
-//     fn render(&mut self, mut _ctx: &mut Context) {
-//         Render::clear(_ctx, Color::RGB(130, 130, 255));
-//         Render::rect(_ctx, &self.player, Color::RGB(0, 0, 255));
-//         for wall in self.walls.iter() {
-//            Render::rect(_ctx, &wall, Color::RGB(0, 0, 0));
-//         }
-//     }
-//   }
-
-//   let mut my_game = MyGame::new(&mut ctx);
-
-//   match GameLoop::run(&mut ctx, &mut event_pump, &mut my_game) {
-//     Ok(()) => println!("Game exited"),
-//     Err(e) => println!("Error occured: {}", e),
-//   }
-//   Ok(())
-// }
-
+fn load_image(file: String) -> Result<RgbaImage, String> {
+    match image::open(file.clone()) {
+        Err(err) => panic!("Could not load image {}: {}", file, err),
+        Ok(img) => {
+            let img = match img {
+                DynamicImage::ImageRgba8(img) => img,
+                img => img.to_rgba(),
+            };
+            Ok(flip_vertical(&img))
+        }
+    }
+}
 
 fn main() {
-  let (mut ctx, mut event_pump) = Context::new(None);
-  let texture_creator = ctx.canvas.texture_creator();
-  let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string()).unwrap();
-  let resourceManager = ResourceManager::new(&texture_creator, &ttf_context);
-
-    struct MyGame <'t> {
-        resourceManager: ResourceManager<'t>
+    let (mut ctx, mut event_pump) = Context::new(None);
+    struct MyGame {
+        rect: gl_entity,
+        texture_id: gl::types::GLuint,
+        direction: nalgebra_glm::Vec2,
+        position: nalgebra_glm::Vec2
     }
+    
+    let vert_shader = Shader::from_vert_source(
+        &CString::new(include_str!("../shaders/rect.vert")).unwrap(),
+    )
+    .unwrap();
 
-    impl <'t> EventHandler for MyGame <'t> {
-        fn update(&mut self, _ctx: &mut Context) {
-            // self.resourceManager.textures.
+    let frag_shader = Shader::from_frag_source(
+        &CString::new(include_str!("../shaders/rect.frag")).unwrap(),
+    )
+    .unwrap();
+
+    let shader_program = Program::from_shaders(&[vert_shader, frag_shader]).unwrap();
+    let rect = Renderer::create_rect(shader_program.id);
+    let (width, height) = ctx.window.size();
+    Renderer::set_projection(shader_program.id, width, height, nalgebra_glm::vec2(0.0, 0.0));
+
+    impl EventHandler for MyGame {
+        fn update(&mut self, ctx: &mut Context) {
+            let (width, height) = ctx.window.size();
+            if self.position.x > width as f32 - 25.0 ||  self.position.x < 25.0 {
+                self.direction = -self.direction;
+            }
+
+            self.position+= self.direction;
         }
 
-        fn render(&self, _ctx: &mut Context) {
-
+        fn render(&self, ctx: &mut Context) {
+            Renderer::clear();
+            Renderer::rect(&self.rect, self.position + self.direction, nalgebra_glm::vec2(50.0, 50.0));
+            ctx.window.gl_swap_window();
         }
     }
-
     let mut my_game = MyGame {
-        resourceManager
+        rect,
+        texture_id: 0,
+        position: nalgebra_glm::vec2(25.0, 400.0),
+        direction: nalgebra_glm::vec2(5.0, 0.0)
     };
+
+
+    
+    
+
+    Renderer::clear_color(0.3, 0.3, 0.5, 1.0);
 
     match GameLoop::run(&mut ctx, &mut event_pump, &mut my_game) {
         Ok(()) => println!("Game exited"),
